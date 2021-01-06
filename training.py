@@ -62,9 +62,12 @@ def train(model_selection, data_path, data_path_train, data_path_val, config, ex
 
         with tf.name_scope('validation_batch'):
             val_data_manager = DataManager(config.audio_feat_dim, config.video_feat_dim, config.num_audio_samples, mode=tfrecord_mode)
+            print('I got the val manager')
             val_dataset, num_examples_val = val_data_manager.get_dataset(data_path_val)
+            print('I got the val dataset')
             val_dataset, val_it = val_data_manager.get_iterator(val_dataset, batch_size=num_examples_val,
                                                                 n_epochs=1, train=False)
+            print('I passed the iterator')
             next_val_batch = val_it.get_next()
     
         # Placeholders.

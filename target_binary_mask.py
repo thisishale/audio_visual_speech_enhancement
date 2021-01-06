@@ -127,8 +127,11 @@ def save_target_binary_masks(dataset_path, list_of_speakers, audio_folder, dest_
     for s in list_of_speakers:
         print('Computing Target Binary Masks of speaker {:d}...'.format(s))
         audio_path = os.path.join(dataset_path, 's' + str(s), audio_folder)
+        # audio_path = os.path.join(dataset_path, audio_folder, 's' + str(s))
         dest_path = os.path.join(dataset_path, 's' + str(s), dest_dir)
-        
+        # dest_path = os.path.join(dataset_path, dest_dir, 's' + str(s))
+        # print(audio_path)
+        # print(dest_path)
         save_target_binary_masks_speaker(audio_path, dest_path, mask_factor, sample_rate, max_audio_length, ltass_samples)
 
         print('Speaker {:d} completed.'.format(s))

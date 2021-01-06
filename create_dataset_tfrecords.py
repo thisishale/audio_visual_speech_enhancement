@@ -53,17 +53,17 @@ def video_normalization(features_file_list, delta=0):
             features.append(data)
 
     features = np.vstack(features)
-    print(features.shape)
+    # print(features.shape)
 
     dataset_mean = np.mean(features, axis=0)
     dataset_stdev = np.std(features, axis=0)
 
-    print('Mean:')
-    print(dataset_mean.shape)
-    print(dataset_mean)
-    print('Standard deviation:')
-    print(dataset_stdev.shape)
-    print(dataset_stdev)
+    # print('Mean:')
+    # print(dataset_mean.shape)
+    # print(dataset_mean)
+    # print('Standard deviation:')
+    # print(dataset_stdev.shape)
+    # print(dataset_stdev)
 
     return dataset_mean, dataset_stdev
 
@@ -80,17 +80,17 @@ def audio_normalization(features_file_list):
             features.append(data)
 
     features = np.vstack(features)
-    print(features.shape)
+    # print(features.shape)
 
     dataset_mean = np.mean(features, axis=0)
     dataset_stdev = np.std(features, axis=0)
 
-    print('Mean:')
-    print(dataset_mean.shape)
-    print(dataset_mean)
-    print('Standard deviation:')
-    print(dataset_stdev.shape)
-    print(dataset_stdev)
+    # print('Mean:')
+    # print(dataset_mean.shape)
+    # print(dataset_mean)
+    # print('Standard deviation:')
+    # print(dataset_stdev.shape)
+    # print(dataset_stdev)
 
     return dataset_mean, dataset_stdev
 
@@ -181,7 +181,8 @@ def get_filenames_2spk(data_path, mix_audio_folder, base_audio_folder, video_fol
     other_audio_file_list = []
     video_file_list = []
     tbm_file_list = []
-
+    # print('blaaaaaaaaah')
+    # print(os.path.join(data_path, mix_audio_folder, '*.wav'))
     for mix_file in mix_audio_file_list:
         mix_split = os.path.basename(mix_file).split('_')
         base_audio_file_list.append(os.path.join(data_path, speaker, base_audio_folder, mix_split[0] + '.wav'))
@@ -220,7 +221,11 @@ def create_tfrecords_speaker_2spk(data_path, mix_audio_folder, video_folder, tbm
     # get associated files from file_list
     mix_audio_file_list, base_audio_file_list, tbm_file_list, video_file_list, other_audio_file_list = \
         get_filenames_2spk(data_path, mix_audio_folder, base_audio_folder, video_folder, tbm_folder)
-    
+    # print(mix_audio_file_list)
+    # print(base_audio_file_list)
+    # print(tbm_file_list)
+    # print(video_file_list)
+    # print(other_audio_file_list)
     # normalization data filenames
     dataset_video_mean_file = os.path.join(dataset_norm_folder, speaker + '_video_mean.npy')
     dataset_video_std_file = os.path.join(dataset_norm_folder, speaker + '_video_std.npy')
@@ -417,6 +422,8 @@ def create_tfrecords_speaker_3spk(data_path, mix_audio_folder, video_folder, tbm
 def create_tfrecords(data_path, n_speakers, mix_audio_folder, video_folder, tbm_folder, base_audio_folder, dest_dir,
                      delta, dataset_norm_folder, tfrecord_mode='fixed'):
     file_counter = 0
+    # print('print stuff')
+    # print(os.path.join(data_path, mix_audio_folder, '*'))
     for mix_speaker_dir in glob(os.path.join(data_path, mix_audio_folder, '*')):
         if n_speakers == 2:
             file_counter = create_tfrecords_speaker_2spk(data_path, mix_speaker_dir, video_folder, tbm_folder, base_audio_folder,
@@ -431,7 +438,7 @@ def create_dataset(dataset_dir, n_speakers, video_dir, tbm_dir, base_audio_dir, 
     train_dir = os.path.join(dataset_dir, save_dir, 'TRAINING_SET')
     val_dir = os.path.join(dataset_dir, save_dir, 'VALIDATION_SET')
     test_dir = os.path.join(dataset_dir, save_dir, 'TEST_SET')
-
+    
     # create tfrecord directories if they not exist
     for folder in (train_dir, val_dir, test_dir):
         if not os.path.exists(folder):
@@ -444,9 +451,10 @@ def create_dataset(dataset_dir, n_speakers, video_dir, tbm_dir, base_audio_dir, 
     # generate TFRecords
     print('Creating training TFRecords...')
     train_mix_path = os.path.join(mix_audio_dir, 'TRAINING_SET')
+    # print(train_mix_path)
     num_train_samples = create_tfrecords(dataset_dir, n_speakers, train_mix_path, video_dir, tbm_dir, base_audio_dir,
                                          train_dir, delta, norm_data_dir, tfrecord_mode)
-
+    # print(num_train_samples)
     print('Creating validation TFRecords...')
     val_mix_path = os.path.join(mix_audio_dir, 'VALIDATION_SET')
     num_val_samples = create_tfrecords(dataset_dir, n_speakers, val_mix_path, video_dir, tbm_dir, base_audio_dir,

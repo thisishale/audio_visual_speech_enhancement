@@ -46,6 +46,13 @@ av_speech_enhancement.py mixed_speech_generator
 	--num_mix <num_mix>
 	--num_mix_speakers <num_mix_speakers> {1,2}
 ```
+
+av_speech_enhancement.py mixed_speech_generator --data_dir D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid --base_speaker_ids 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25 26 --noisy_speaker_ids 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25 26 --audio_dir audio --dest_dir mix\TRAINING_SET --num_samples 200 --num_mix 3 --num_mix_speakers 1
+
+av_speech_enhancement.py mixed_speech_generator --data_dir D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid --base_speaker_ids 27 28 29 31 --noisy_speaker_ids 27 28 29 31 --audio_dir audio --dest_dir mix\VALIDATION_SET --num_samples 200 --num_mix 3 --num_mix_speakers 1
+
+av_speech_enhancement.py mixed_speech_generator --data_dir D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid --base_speaker_ids 30 32 33 34 --noisy_speaker_ids 30 32 33 34 --audio_dir audio --dest_dir mix\VALIDATION_SET --num_samples 200 --num_mix 3 --num_mix_speakers 1
+
 The generated files are organized as follow:
 ```
 TRAINING_SET
@@ -74,6 +81,11 @@ av_speech_enhancement.py audio_preprocessing
 	--sample_rate <sample_rate>
 	--max_wav_length <max_wav_length>
 ```
+
+av_speech_enhancement.py audio_preprocessing --data_dir D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid --speaker_ids 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25 26 --audio_dir mix\TRAINING_SET --dest_dir mix\TRAINING_SET --max_wav_length 48000
+
+av_speech_enhancement.py audio_preprocessing --data_dir D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid --speaker_ids 27 28 29 31 --audio_dir mix\VALIDATION_SET --dest_dir mix\VALIDATION_SET --max_wav_length 48000
+
 #### Video pre-processing
 Extract face landmarks from video using Dlib face detector and face landmark extractor. Files are saved in TXT format (each row has 136 values that represents the flattened x-y values of 68 face landmarks).
 ```
@@ -85,6 +97,12 @@ av_speech_enhancement.py video_preprocessing
 	--shape_predictor <shape_predictor_file>
 	--ext <video_file_extension>
 ```
+the feature file is 75*136 75 is the number of frames. 136 is twice 68. 68 is the coordinates of landmarks. so landmarks is 75 coordinates (68*2). we reshape it to 75*136 and save it as a text file.
+
+av_speech_enhancement.py video_preprocessing --data_dir D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid --speaker_ids 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25 29 --video_dir video --dest_dir video --shape_predictor shape_predictor_68_face_landmarks.dat --ext mpg 
+
+av_speech_enhancement.py show_face_landmarks --video D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid\s2\video\s2_l_bbim3a.mov --shape_predictor shape_predictor_68_face_landmarks.dat    
+
 ```<shape_predictor_file>```  contains the parameters of the face landmark extractor model. You can download a pre-trained model file [here](http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2).
 
 If you want to check the result of the face landmark extractor type:
@@ -107,6 +125,8 @@ av_speech_enhancement.py tbm_computation
 	--max_wav_length <max_wav_length>
 ```
 
+av_speech_enhancement.py tbm_computation --data_dir D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid --speaker_ids 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25 26 27 28 29 30 31 32 33 34 --audio_dir audio --dest_dir tbm --sample_rate 16000 --max_wav_length 48000  
+
 #### TFRecords generation
 Before training you have to generate TFRecords of mixed-speech dataset. ```<data_dir>/<mix_dir>``` must have three subdirectories named ```TRAINING_SET```, ```VALIDATION_SET``` and ```TEST_SET``` created with ```<mixed_speech_generator>``` subcommand. Pre-computed spectrogram (NPY format) must be located in the same directory of audio file.
 Set ```<tfrecords_mode>```  to "fixed" if samples of the dataset all have the same length (as in GRID corpus), otherwise use "var" (as in TCD-TIMIT corpus).
@@ -123,6 +143,10 @@ av_speech_enhancement.py tfrecords_generator
 	--delta <delta_video_feat> {0,1,2]
 	--norm_data_dir <normalization_data_dir>
 ```
+
+av_speech_enhancement.py tfrecords_generator --data_dir D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid --num_speakers 2 --mode fixed --dest_dir mix\tfrecords --base_audio_dir audio --video_dir video --tbm_dir tbm --mix_audio_dir mix --delta 0 --norm_data_dir mix\norm
+
+
 #### Training
 Train an audio-visual speech enhancement model described. You can choose between VL2M, VL2M_ref, Audio-Visual Concat and Audio-Visual Concat-ref models.
 ```
@@ -147,6 +171,9 @@ av_speech_enhancement.py training
 	--dropout <dropout_rate>
 	--regularization <regularization_weight>
 ```
+
+av_speech_enhancement.py training --data_dir D:\studies\university\thesis\speech_separation_codes\du16\donesomestuff\dataset_grid --train_set mix\tfrecords\TRAINING_SET --val_set mix\tfrecords\TRAINING_SET --exp 1 --mode fixed --num_audio_samples 1198 --model vl2m --learning_rate 1e-4 --opt adam --batch_size 32 --epochs 100 --hidden_units 250 --layers 5
+
 #### Testing
 Test your trained model. Enhanced speech samples and estimated masks are saved in ```<data_dir>/<output_dir>```. Estimated masks are saved  in subdirectories ```<mask_dir>``` of each speaker directory.
 ```

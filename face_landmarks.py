@@ -62,6 +62,7 @@ def extract_face_landmarks(video_filename, predictor_params, refresh_size=8):
                 # convert the facial landmark (x,y)-coordinates to a numpy
                 # array
                 shape = predictor(gray, rect)
+                print(shape.shape)
                 landmarks.append(face_utils.shape_to_np(shape))
                 face_rects.append(face_utils.rect_to_bb(rect))
 
@@ -152,7 +153,7 @@ def save_face_landmarks_speaker(video_path, dest_path, predictor_params, file_ex
         os.makedirs(dest_path)
 
     video_filenames = glob(os.path.join(video_path, '*.' + file_ext))
-    
+    print(os.path.join(video_path, '*.' + file_ext))
     count = 0
     for v_file in video_filenames:
         landmarks, _ = extract_face_landmarks(v_file, predictor_params, refresh_size)
