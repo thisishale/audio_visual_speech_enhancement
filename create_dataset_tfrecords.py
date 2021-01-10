@@ -98,7 +98,9 @@ def serialize_sample_fixed(video_sequence, tbm, audio_samples, audio_paths, mix_
     # Video_sequence and audio_sequence must have the same length
     # The object we return
     example = tf.train.SequenceExample()
-
+    # print(audio_samples[0].shape)
+    # print(audio_samples[1].shape)
+    # print(audio_samples[2].shape)
     # Non-sequential features of our example
     example.context.feature['sequence_length'].int64_list.value.append(len(video_sequence))
     example.context.feature['base_audio_wav'].float_list.value.extend(audio_samples[0])
@@ -121,6 +123,7 @@ def serialize_sample_fixed(video_sequence, tbm, audio_samples, audio_paths, mix_
 
     for mix_spec_feat in mix_spec_norm:
         fl_mix_spec.feature.add().float_list.value.extend(mix_spec_feat)
+        # print(mix_spec_feat.shape)
     
     return example
 
@@ -221,11 +224,16 @@ def create_tfrecords_speaker_2spk(data_path, mix_audio_folder, video_folder, tbm
     # get associated files from file_list
     mix_audio_file_list, base_audio_file_list, tbm_file_list, video_file_list, other_audio_file_list = \
         get_filenames_2spk(data_path, mix_audio_folder, base_audio_folder, video_folder, tbm_folder)
-    # print(mix_audio_file_list)
-    # print(base_audio_file_list)
-    # print(tbm_file_list)
-    # print(video_file_list)
-    # print(other_audio_file_list)
+    # print("*"*100)
+    # print(mix_audio_file_list[0])
+    # print("*"*100)
+    # print(base_audio_file_list[0])
+    # print("*"*100)
+    # print(tbm_file_list[0])
+    # print("*"*100)
+    # print(video_file_list[0])
+    # print("*"*100)
+    # print(other_audio_file_list[0])
     # normalization data filenames
     dataset_video_mean_file = os.path.join(dataset_norm_folder, speaker + '_video_mean.npy')
     dataset_video_std_file = os.path.join(dataset_norm_folder, speaker + '_video_std.npy')
@@ -289,6 +297,7 @@ def create_tfrecords_speaker_2spk(data_path, mix_audio_folder, video_folder, tbm
             mix_audio_wav = downsampling(mix_audio_wav, sample_rate, 16e3)
             # adjust samples to match audio lengths
             base_audio_wav = base_audio_wav[: len(mix_audio_wav)]
+            # print(base_audio_wav.shape)
             other_audio_wav = adjust_samples(len(mix_audio_wav), other_audio_wav)
 
             # get filenames relative paths
@@ -305,6 +314,7 @@ def create_tfrecords_speaker_2spk(data_path, mix_audio_folder, video_folder, tbm
                 audio_wavs = [base_audio_wav, other_audio_wav, mix_audio_wav]
                 audio_paths = [base_audio_path, other_audio_path, mix_audio_path]
                 if tfrecord_mode == 'fixed':
+                    # print(audio_wavs[0].shape)
                     serialized_sample = serialize_sample_fixed(features_video, tbm, audio_wavs, audio_paths, mix_spec_norm)
                 elif tfrecord_mode == 'var':
                     serialized_sample = serialize_sample_var(features_video, tbm, audio_wavs, audio_paths, mix_spec_norm)

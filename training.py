@@ -1,15 +1,14 @@
 from __future__ import division
 
+import tensorflow as tf
 import os
 import sys
 import numpy as np
-import tensorflow as tf
 from time import time
 
 from dataset_reader import DataManager
 from enhancement_model import VL2M, VL2MRef, AudioVisualConcatMask, AudioVisualConcatMaskRef
 from eval_metrics import snr_batch_eval, sdr_batch_eval, l2_batch_eval
-
 # Avoid printing TF log messages
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -131,7 +130,6 @@ def train(model_selection, data_path, data_path_train, data_path_val, config, ex
             # Fetch validation samples batch.
             val_length, val_tbm, val_video_feature, val_mixed_specs, val_base_audio, val_other_audio, \
                val_mixed_audio, val_base_paths, val_other_paths, val_mixed_paths = sess.run(next_val_batch)
-            
             # restore variables
             last_checkpoint = tf.train.latest_checkpoint(checkpoints_dir)
             if last_checkpoint:

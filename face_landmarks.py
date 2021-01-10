@@ -62,7 +62,6 @@ def extract_face_landmarks(video_filename, predictor_params, refresh_size=8):
                 # convert the facial landmark (x,y)-coordinates to a numpy
                 # array
                 shape = predictor(gray, rect)
-                print(shape.shape)
                 landmarks.append(face_utils.shape_to_np(shape))
                 face_rects.append(face_utils.rect_to_bb(rect))
 

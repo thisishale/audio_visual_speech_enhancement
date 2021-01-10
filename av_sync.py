@@ -8,7 +8,11 @@ def inc_fps(frames, target_len):
     x = np.arange(frames.shape[1])
     y = np.arange(frames.shape[0])
     y_inc = np.linspace(0, len(frames) * (1 - 1 / target_len), target_len)
-    
+    # print(target_len)
+    # print(len(frames) * (1 - 1 / target_len))
+    # print(x)
+    # print(y)
+    # print(y_inc)
     return interp2d(x, y, frames, kind='linear')(x, y_inc)
 
 

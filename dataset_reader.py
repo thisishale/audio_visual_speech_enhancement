@@ -1,4 +1,5 @@
 import tensorflow as tf
+tf.enable_eager_execution()
 from os import listdir
 from os.path import isfile, join
 import random
@@ -14,14 +15,22 @@ class DataManager:
         self.single_video_frame_size = single_video_frame_size
         self.buffer_size = buffer_size
         self.mode = mode
+        # self.start = 0
 
 
     def get_dataset(self, folder_path):
         file_list = [join(folder_path, f) for f in listdir(folder_path) if isfile(join(folder_path, f))]
+        file_list = file_list[0:2000]
         random.shuffle(file_list)
         dataset = tf.data.TFRecordDataset(file_list)
+        dataset = dataset.shard(10,0)
+        # dataset = dataset.repeat(2) # so adding repeat did not change anything, but will shuffle change anything?
+        # dataset = dataset.shuffle(100)
+        # dataset = shards.shuffle()
 
+        # dataset = tf.data.TFRecordDataset(file_list)
         if self.mode == 'fixed':
+            print('before')
             dataset = dataset.map(self.read_data_format_fixed)
         elif self.mode == 'var':
             dataset = dataset.map(self.read_data_format_var)
@@ -48,6 +57,8 @@ class DataManager:
 
 
     def read_data_format_fixed(self, sample):
+        # self.start = self.start + 1
+        # print(self.start)
         context_parsed, sequence_parsed = \
                     tf.parse_single_sequence_example(sample,
                                                      context_features={
@@ -64,7 +75,7 @@ class DataManager:
                                                       'video_features': tf.FixedLenSequenceFeature([self.single_video_frame_size], dtype=tf.float32),
                                                       'mixed_spectrogram': tf.FixedLenSequenceFeature([self.single_audio_frame_size], dtype=tf.float32)
                                                       })
-
+        
         #sequence_parsed['mixed_spectrogram'],
         return tf.to_int32(context_parsed['sequence_length']), \
                sequence_parsed['tbm'], sequence_parsed['video_features'], sequence_parsed['mixed_spectrogram'], \
